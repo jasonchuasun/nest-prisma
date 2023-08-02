@@ -1,24 +1,34 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { ExcludeFieldsInterceptor } from 'src/shared/transform.interceptor';
 
-@Controller()
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @Get('user')
-  // async findAll(): Promise<User[]> {
-  //   return await this.userService.findall();
-  // }
-  @Get('user')
-  async findAll(): Promise<String> {
+  @UseInterceptors(new ExcludeFieldsInterceptor())
+  @Get()
+  async findAll() {
     return await this.userService.findall();
   }
+  
+  @Post()
+  async create(
+    @Body() userData: Prisma.UserCreateInput,
+    ): Promise<User> {
+      return await this.userService.create(userData);
+    }
+    
+  @UseInterceptors(new ExcludeFieldsInterceptor())
+  @Get('/:id')
+  async findOne(@Param('id') id: number): Promise<User> {
+    const user = await this.userService.findOne(id);
 
-  @Post('user')
-  async createUser(
-    @Body() userData: { first_name: string; last_name: string; email: string, password: string },
-  ): Promise<User> {
-    return this.userService.createUser(userData);
+    if (!user ) {
+      throw new NotFoundException('User not found!')
+    }
+
+    return user;
   }
 }
