@@ -7,7 +7,7 @@ import { ExcludeFieldsInterceptor } from 'src/shared/transform.interceptor';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseInterceptors(new ExcludeFieldsInterceptor())
+  @UseInterceptors(new ExcludeFieldsInterceptor(['password']))
   @Get()
   async findAll() {
     return await this.userService.findall();
@@ -20,7 +20,7 @@ export class UserController {
       return await this.userService.create(userData);
     }
     
-  @UseInterceptors(new ExcludeFieldsInterceptor())
+  @UseInterceptors(new ExcludeFieldsInterceptor(['password']))
   @Get('/:id')
   async findOne(@Param('id') id: number): Promise<User> {
     const user = await this.userService.findOne(id);
