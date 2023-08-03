@@ -1,61 +1,39 @@
 import {
   BadRequestException,
-  Body,
   Controller,
-  Delete,
   Get,
   NotFoundException,
   Param,
-  Post,
-  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Prisma, User } from '@prisma/client';
-import { ExcludeFieldsInterceptor } from 'src/shared/transform.interceptor';
+import { Role, User } from '@prisma/client';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseInterceptors(new ExcludeFieldsInterceptor(['password']))
-  @Get('/:id')
-  async findOne(@Param('id') id: number): Promise<User> {
-    const user = await this.userService.findOne(id);
+  @Get('/:role')
+  async getUsersBasedOnRole(@Param('role') role: Role) {
+    const roleUppercase = role.toUpperCase() as Role;
 
-    if (!user) {
-      throw new NotFoundException('User not found!');
+    this.validateRole(roleUppercase);
+
+    const users = await this.findUsersByRole(roleUppercase);
+    
+    if (users.length == 0) {
+      throw new NotFoundException('No users found')
     }
-
-    return user;
+    
+    return users;
   }
 
-  @UseInterceptors(new ExcludeFieldsInterceptor(['password']))
-  @Get()
-  async findAll() {
-    return await this.userService.findall();
+  validateRole(role: Role): void {
+    if (!Object.values(Role).includes(role)) {
+      throw new BadRequestException('Role entered is not valid')
+    }
   }
 
-  @Post()
-  async create(
-    @Body() userData: Prisma.UserCreateInput & { password_confirm: string },
-  ): Promise<User> {
-    const { password, ...rest } = userData;
-
-    if (password !== userData.password_confirm) {
-      throw new BadRequestException('Passwords do not match');
-    }
-    const newUser = await this.userService.create({ password, ...rest });
-    return newUser;
-  }
-
-  @Delete('/:id')
-  async delete(@Param('id') id: number): Promise<string> {
-    try {
-      await this.userService.delete(id);
-
-      return 'Successfully deleted.';
-    } catch {
-      throw new NotFoundException('User not found!');
-    }
+  async findUsersByRole(role: Role): Promise<User[]> {
+    return await this.userService.findMany({ role });
   }
 }

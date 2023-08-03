@@ -12,7 +12,8 @@ model User {
   first_name String 
   last_name String
   password String
-  email String? 
+  email String? @unique
+  role Role @default(USER) 
 }
 
 model Product {
@@ -20,4 +21,10 @@ model Product {
   title String 
   description String 
   createdAt DateTime @default(now())
+}
+
+enum Role {
+  USER @map(name: "user")
+  ADMIN @map(name: "admin")
+  AMBASSADOR @map(name: "ambassador")
 }
