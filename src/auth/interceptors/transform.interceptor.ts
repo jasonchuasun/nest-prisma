@@ -1,4 +1,9 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -8,10 +13,11 @@ export class ExcludeFieldsInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      map(data => {
+
+      map((data) => {
         // If the data is an array, we map through each item and exclude the specified fields.
         if (Array.isArray(data)) {
-          return data.map(item => this.excludeFields(item));
+          return data.map((item) => this.excludeFields(item));
         }
 
         // If the data is an object, we directly exclude the specified fields.
@@ -24,6 +30,6 @@ export class ExcludeFieldsInterceptor implements NestInterceptor {
     for (const field of this.excludedFields) {
       delete data[field];
     }
-    return data
+    return data;
   }
 }
