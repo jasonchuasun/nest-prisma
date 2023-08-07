@@ -19,7 +19,7 @@ describe('AuthController', () => {
       const userId = 1;
       const user = { id: userId }; 
       
-      jest.spyOn(authController['authService'], 'findOne').mockResolvedValue(user);
+      jest.spyOn(authService, 'findOne').mockResolvedValue(user);
 
       const result = await authController.findOne(userId);
       
@@ -29,7 +29,7 @@ describe('AuthController', () => {
     it('should throw NotFoundException if user is not found', async () => {
       const userId = 9999;
 
-      jest.spyOn(authController['authService'], 'findOne').mockResolvedValue(null);
+      jest.spyOn(authService, 'findOne').mockResolvedValue(null);
 
       try {
         await authController.findOne(userId);
