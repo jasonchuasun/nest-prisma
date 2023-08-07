@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
-import { PrismaService } from 'src/shared/prisma.service';
 import { PasswordService } from 'src/shared/password.service';
-import { AbstractService } from 'src/shared/abstract.service';
+import { AbstractService } from '../shared/abstract.service';
+import { PrismaService } from '../shared/prisma.service';
 
 @Injectable()
 export class AuthService extends AbstractService {

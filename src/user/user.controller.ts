@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Role, User } from '@prisma/client';
-import { ExcludeFieldsInterceptor } from 'src/auth/interceptors/transform.interceptor';
+import { ExcludeFieldsInterceptor } from '../auth/interceptors/transform.interceptor';
 
 @Controller('user')
 export class UserController {

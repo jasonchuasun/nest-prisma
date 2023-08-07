@@ -9,9 +9,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ExcludeFieldsInterceptor } from './interceptors/transform.interceptor';
-import { AuthService } from 'src/auth/auth.service';
 import { Prisma, User } from '@prisma/client';
-import { PasswordService } from 'src/shared/password.service';
+import { AuthService } from './auth.service';
+import { PasswordService } from '../shared/password.service';
 
 @Controller('auth')
 export class AuthController {
