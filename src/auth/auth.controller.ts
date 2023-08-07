@@ -37,14 +37,20 @@ export class AuthController {
   @UseInterceptors(new ExcludeFieldsInterceptor(['password']))
   @Get()
   async findAll() {
-    return await this.authService.findall();
+    const users = await this.authService.findAll();
+
+    if (users.length == 0) {
+      throw new NotFoundException('No users found');
+    }
+
+    return users;
   }
 
   @UseInterceptors(new ExcludeFieldsInterceptor(['password']))
   @Post()
   async create(
     @Body() userData: Prisma.UserCreateInput & { password_confirm: string },
-  ): Promise<User> {
+  ) {
     const { password_confirm, ...rest } = userData;
 
     this.passwordService.comparePasswordAndPasswordConfirmation(
@@ -58,7 +64,7 @@ export class AuthController {
   }
 
   async checkIfEmailIsTaken(email: string): Promise<void> {
-    const user = await this.authService.findOne({ email });
+    const user = await this.authService.findOne({ email: email });
 
     if (user) {
       throw new NotFoundException('Email is already taken');
@@ -67,19 +73,20 @@ export class AuthController {
 
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<string> {
-    await this.checkIfUserExists({ id: Number(id) });
+    await this.checkIfUserExists(id);
 
     await this.authService.delete(id);
 
     return 'Successfully deleted';
   }
 
-  async checkIfUserExists(option: Prisma.UserWhereInput): Promise<void> {
-    const user = await this.authService.findOne(option);
+  async checkIfUserExists(id: number): Promise<void> {
+    const user = await this.authService.findOne({
+      id: Number(id),
+    });
 
     if (!user) {
       throw new NotFoundException('User not found!');
     }
   }
-
 }
