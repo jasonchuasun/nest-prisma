@@ -75,7 +75,7 @@ export class AuthController {
   async delete(@Param('id') id: number): Promise<string> {
     await this.checkIfUserExists(id);
 
-    await this.authService.delete(id);
+    await this.authService.delete({ id: Number(id) });
 
     return 'Successfully deleted';
   }

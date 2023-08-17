@@ -31,11 +31,9 @@ export class AbstractService {
     });
   }
 
-  async delete(id: number): Promise<string> {
+  async delete(option: any): Promise<string> {
     await this.prisma[this.modelname].delete({
-      where: {
-        id: Number(id)
-      }
+      where: option
     });
 
     return `Successfully deleted ${this.modelname}`;
