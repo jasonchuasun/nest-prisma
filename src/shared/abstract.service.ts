@@ -9,31 +9,31 @@ export class AbstractService {
     protected modelname: Prisma.ModelName,
   ) {}
 
-  async findOne(option: any): Promise<any> {
+  async findOne(options: any): Promise<any> {
     return await this.prisma[this.modelname].findUnique({
-      where: option,
+      where: options,
     });
   }
 
-  async findAll(): Promise<any> {
-    return await this.prisma[this.modelname].findMany();
+  async findAll(options?: any): Promise<any> {
+    return await this.prisma[this.modelname].findMany(options);
   }
 
-  async findManyBy(option: any): Promise<any> {
+  async findManyBy(options: any): Promise<any> {
     return await this.prisma[this.modelname].findMany({
-      where: option,
+      where: options,
     });
   }
 
-  async create(option: any): Promise<any> {
+  async create(options: any): Promise<any> {
     return await this.prisma[this.modelname].create({
-      data: option,
+      data: options,
     });
   }
 
-  async delete(option: any): Promise<string> {
+  async delete(options: any): Promise<string> {
     await this.prisma[this.modelname].delete({
-      where: option
+      where: options
     });
 
     return `Successfully deleted ${this.modelname}`;
