@@ -11,11 +11,13 @@ import { AuthModule } from './auth/auth.module';
 import { PasswordService } from './shared/password.service';
 import { PostService } from './post/post.service';
 import { PostModule } from './post/post.module';
+import { CommentService } from './comment/comment.service';
+import { CommentModule } from './comment/comment.module';
 
 
 @Module({
-  imports: [UserModule, AuthModule, PostModule],
+  imports: [UserModule, AuthModule, PostModule, CommentModule],
   controllers: [AppController, UserController, AuthController],
-  providers: [AppService, UserService, PrismaService, AuthService, PasswordService, PostService],
+  providers: [AppService, UserService, PrismaService, AuthService, PasswordService, PostService, CommentService],
 })
 export class AppModule {}
