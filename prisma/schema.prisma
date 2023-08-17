@@ -14,13 +14,15 @@ model User {
   password String
   email String? @unique
   role Role @default(USER) 
+  posts Post[]
 }
 
-model Product {
+model Post {
   id Int @id @default(autoincrement())
-  title String 
-  description String 
-  createdAt DateTime @default(now())
+  title String
+  body String
+  userId Int
+  author User @relation(fields: [userId], references: [id])
 }
 
 enum Role {
