@@ -5,22 +5,32 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseBoolPipe,
+  ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { Prisma } from '@prisma/client';
+import { PostQueryDto } from './dtos/postQuery.dto';
 
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get()
-  async findAll() {
-    const posts = await this.postService.findAll({
+  async findAll(@Query() queryParams: PostQueryDto) {
+    const { sortBy, sort, take, includeComments } = queryParams;
+
+    const options = {
+      orderBy: { [sortBy || 'title']: sort || 'asc' },
       include: {
-        comments: true,
+        comments: includeComments === 'true',
       },
-    });
+      take: Number(take) || 10,
+    };
+
+    const posts = await this.postService.findAll(options);
 
     await this.checkIfPostsExist(posts);
 
@@ -34,8 +44,8 @@ export class PostController {
   }
 
   @Get('/:id')
-  async findOne(@Param('id') id: number) {
-    const post = await this.postService.findOne({ id: Number(id) });
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const post = await this.postService.findOne({ id });
 
     await this.checkIfPostExists(post);
 
